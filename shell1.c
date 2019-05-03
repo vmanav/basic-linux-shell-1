@@ -94,37 +94,37 @@ void cd(char arg[100])
 
 void ls()
 {
-pid_t f=fork();
-int stat;
+	pid_t f=fork();
+	int stat;
 
-if(f==0)
-{
-char dirname[10];
-DIR*p;
-struct dirent *d;
-p=opendir(".");
-if(p==NULL)
-  {
-  exit(-1);
-  }
-while(d=readdir(p)){
-  if(strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
-        	continue;
-  printf("%s ",d->d_name);
+	if(f==0)
+	{
+		char dirname[10];
+		DIR*p;
+		struct dirent *d;
+		p=opendir(".");
+		if(p==NULL)
+  		{
+  			exit(-1);
+  		}
+		while(d=readdir(p))
+		{
+  			if(strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
+        			continue;
+  			printf("%s ",d->d_name);
 
-}
+		}
+		exit(1);
+	}
 
-exit(1);
-}
-
-else
-{ 
-    wait(&stat);
-	if (WIFEXITED(stat)) 
-        {
-        	if(WEXITSTATUS(stat)!=1)printf("NO files Found");
-        }
-}
+	else
+	{ 
+   		 wait(&stat);
+		if (WIFEXITED(stat)) 
+        	{
+        		if(WEXITSTATUS(stat)!=1)printf("NO files Found");
+        	}
+	}
 
 }
 
@@ -143,9 +143,6 @@ void check(char command[10],char arg[100])
 	{
 		cd(arg);
 	}
-
-
-
 	if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
 	{
 		makedir(arg);
@@ -159,49 +156,47 @@ void check(char command[10],char arg[100])
 
 	if(strcmp(command,"history")==0 && strlen(arg)==0)
 	{
-	
 	    //printf("%s",buff[0].command);
 		history();
 	}
-
-
 }
 
 
 void loop(void)
 {
 	char *user=getenv("USER");
-char working_dir[path_max];
-while(1)
+	char working_dir[path_max];
+	while(1)
 	{
-       
-         getcwd(working_dir,path_max);
-         char command[10]="";
-	char argument[100]="";
-	char ch;
-	int i=0,j=0,sp=0;
+       		getcwd(working_dir,path_max);
+         	char command[10]="";
+		char argument[100]="";
+		char ch;
+		int i=0,j=0,sp=0;
 		printf("\n%s @ %s >> ",user,working_dir);
-	    while ((ch = getchar())!='\n')
-         {if(ch==' ')
-           { sp=1; break;}
-         command[i++]=ch;   
-}
-if(strcmp(command,"exit")==0)break;
-if(sp)
-{
-	scs(argument);
-}
-check(command,argument);
-if(strcmp(command,"history")!=0)
-{
-printf("%s",command);
-add_to_buffer(&command[0],&argument[0]);
-
-}
-
-
-
-
+	    	while ((ch = getchar())!='\n')
+         	{
+			if(ch==' ')
+           		{ 
+				sp=1; 
+				break;
+			}
+ 	        	command[i++]=ch;   
+		}
+		if(strcmp(command,"exit")==0)break;
+		if(sp)
+		{
+			while ((ch = getchar())!='\n')
+        		{
+            			argument[j++] = ch;
+        		}
+		}
+		check(command,argument);
+		if(strcmp(command,"history")!=0)
+		{
+			printf("%s",command);
+			add_to_buffer(&command[0],&argument[0]);
+		}
 	}
 }
 
