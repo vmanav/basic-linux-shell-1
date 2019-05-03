@@ -8,29 +8,28 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #define path_max 1000
-#define p_s(a) printf("%s",a)
-#define scs(a) scanf("%s",a)
 
 void check(char command[10],char arg[100]);
 int buffer_temp=0;
 int buff_size=0;
 
 
-struct buffer{
+struct buffer
+{
     char command[10];
-    char arg[100]    ;
+    char arg[100];
 }buff[5];
 
 void add_to_buffer(char comm[10],char argu[100])
 {
-    strcpy(buff[buffer_temp].command,comm)    ;
+    strcpy(buff[buffer_temp].command,comm);
     if(strlen(argu)>0)
-    strcpy(buff[buffer_temp].arg,argu);
-        else
+    	strcpy(buff[buffer_temp].arg,argu);
+    else
             strcpy(buff[buffer_temp].arg,"");
     buffer_temp=(buffer_temp+1)%5;
     if(buff_size<5)
-    buff_size++;
+    	buff_size++;
 }
 
 void open(char arg1[],char arg2[])
@@ -200,6 +199,27 @@ void ls()
     }
 }
 
+void help()
+{
+    printf("\nls");
+    printf("\ncd");
+    printf("\nmkdir");
+    printf("\necho");
+    printf("\nhistory");
+    printf("\ncal");
+    printf("\ntouch");
+    printf("\nwho");
+    printf("\nctime");
+    printf("\nfirefox");
+    printf("\nchrome");
+    printf("\nvi");
+    printf("\nsubl");
+    printf("\ngedit");
+    printf("\nnano");
+    printf("\nctime");
+    printf("\nrm");
+}
+
 
 void check(char command[10],char arg[100])
 {
@@ -256,11 +276,16 @@ void check(char command[10],char arg[100])
     }
     else if(strcmp(command,"ctime")==0 && strlen(arg)==0)
     {
-    	curtime(command,NULL);
+    	curtime();
     }
     else if(strcmp(command,"rm")==0 && arg!="")
     {
     	rm(arg);
+    }
+
+    else if(strcmp(command,"help")==0 && strlen(arg)==0)
+    {
+    	help();
     }
 
     else
