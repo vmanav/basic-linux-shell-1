@@ -33,6 +33,11 @@ void add_to_buffer(char comm[10],char argu[100])
     buff_size++;
 }
 
+void calander()
+{	// prints calender
+	system("cal");
+}
+
 void history()
 {
 
@@ -68,6 +73,7 @@ void history()
         check(buff[selected-1].command,buff[selected-1].arg);
     }
 }
+
 
 void echo(char arg[])
 {
@@ -176,6 +182,10 @@ void check(char command[10],char arg[100])
     {
         history();
     }
+    if(strcmp(command,"cal")==0 && strlen(arg)==0)
+	{
+		calander();
+	}
 }
 
 
