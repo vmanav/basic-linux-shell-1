@@ -12,7 +12,8 @@
 
 int buffer_temp=0;
 int buff_size=0;
-struct buffer{
+struct buffer
+{
     char *command;
     char *arg;
 }buff[5];
