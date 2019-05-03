@@ -121,7 +121,6 @@ void echo(char arg[])
     		{
     			printf("%c",arg[i]);
     		}
-    		//printf("\n");
     	}
         else
     	{
@@ -149,7 +148,6 @@ void makedir(char *arg)
 
 void cd(char arg[100])
 {
-	//getcwd()
 	if(chdir(arg)!=0)
 		perror("Cannot change the directory");
 }
@@ -193,7 +191,6 @@ void ls()
 
 void check(char command[10],char arg1[100],char arg2[100])
 {
-	//printf("%s",arg);
 	if(strcmp(command,"ls")==0 && strlen(arg1)==0)
 	{
 		ls();
