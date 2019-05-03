@@ -16,26 +16,49 @@ int buff_size=0;
 struct buffer
 {
     char *command;
-    char *arg;
+    char *arg1;
+    char *arg2;
 }buff[5];
 
 
 
-void add_to_buffer(char *comm,char *argu)
+void add_to_buffer(char *comm,char *arg1,char *arg2)
 {
 	if(strcmp(comm,"history")!=0)
 	{
 		buff[buffer_temp].command=comm;
-    		if(strlen(argu)>0)
-    			buff[buffer_temp].arg=argu;
+    		if(strlen(arg1)>0)
+    		{
+    			buff[buffer_temp].arg1=arg1;
+    			if(strlen(arg2)>0)
+	    		{
+	    			buff[buffer_temp].arg2=arg2;
+	    		}
+	    		else
+	    		{
+	    			buff[buffer_temp].arg2=NULL;
+	    		}
+    		}
+    			
     		else
-    			buff[buffer_temp].arg=NULL;
+    		{
+    			buff[buffer_temp].arg1=NULL;
+    		}
    		 buffer_temp=(buffer_temp+1)%5;
    		// printf("%s",buff[buffer_temp-1].command);
    		 if(buff_size<=5)
     			buff_size++;
     		//printf("%s %s %d",buff[buffer_temp-1].command,buff[buffer_temp-1].arg,buffer_temp-1);
 	}
+}
+
+void open(char arg1[],char arg2[])
+{
+	if(strlen(arg2)==0)
+		if(!fork())
+	    		execlp(arg1,arg1,NULL, NULL);
+	else if(!fork())
+    		execlp(arg1,arg1,arg2, NULL);
 }
 
 void curtime()
@@ -144,40 +167,44 @@ void ls()
 }
 
 
-void check(char command[10],char arg[100])
+void check(char command[10],char arg1[100],char arg2[100])
 {
 	//printf("%s",arg);
-	if(strcmp(command,"ls")==0 && strlen(arg)==0)
+	if(strcmp(command,"ls")==0 && strlen(arg1)==0)
 	{
 		ls();
 	}
-	else if(strcmp(command,"ls")==0 && strlen(arg)!=0)
+	else if(strcmp(command,"ls")==0 && strlen(arg1)!=0)
 		printf("error using ls command , please check the syntax \n");
 
-	if(strcmp(command,"cd")==0 && strlen(arg)!=0 && arg!="")
+	if(strcmp(command,"cd")==0 && strlen(arg1)!=0 && arg1!="")
 	{
-		cd(arg);
+		cd(arg1);
 	}
-	if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
+	if(strcmp(command,"mkdir")==0 && strlen(arg1)!=0 && arg1!="")
 	{
-		makedir(arg);
+		makedir(arg1);
 	}
-	if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
+	if(strcmp(command,"echo")==0 && strlen(arg1)!=0 && arg1!="")
 	{
-		echo(arg);
+		echo(arg1);
 	}
-	if(strcmp(command,"history")==0 && strlen(arg)==0)
+	if(strcmp(command,"history")==0 && strlen(arg1)==0)
 	{
 	    //printf("%s",buff[0].command);
 		history();
 	}
-	if(strcmp(command,"rm")==0 && arg!="")
+	if(strcmp(command,"rm")==0 && arg1!="")
 	{
-		rm(arg);
+		rm(arg1);
 	}
-	if(strcmp(command,"time")==0 && strlen(arg)==0)
+	if(strcmp(command,"time")==0 && strlen(arg1)==0)
 	{
 		curtime();
+	}
+	if(strcmp(command,"open")==0)
+	{
+		open(arg1,arg2);
 	}
 }
 
@@ -190,7 +217,8 @@ void loop(void)
 	{
        		getcwd(working_dir,path_max);
          	char command[10]="";
-		char argument[100]="";
+		char argument1[100]="";
+		char argument2[100]="";
 		char ch;
 		int i=0,j=0,sp=0;
 		printf("\n%s @ %s >> ",user,working_dir);
@@ -199,23 +227,46 @@ void loop(void)
 			if(ch==' ')
            		{ 
 				sp=1; 
+				if(strcmp(command,"open")==0)
+				{
+					while ((ch = getchar())!='\n')
+				 	{
+						if(ch==' ')
+				   		{ 
+							sp++;
+							if(sp==2) 
+								break;
+						}  
+					}
+				}
 				break;
 			}
  	        	command[i++]=ch;   
 		}
 		if(strcmp(command,"exit")==0)break;
-		if(sp)
+		if(sp==1)
 		{
 			while ((ch = getchar())!='\n')
         		{
-            			argument[j++] = ch;
+            			argument1[j++] = ch;
         		}
 		}
-		check(command,argument);
+		if(sp==2)
+		{
+			while ((ch = getchar())!=' ')
+        		{
+            			argument1[j++] = ch;
+        		}
+        		while ((ch = getchar())!='\n')
+        		{
+            			argument2[j++] = ch;
+        		}
+		}
+		check(command,argument1,argument2);
 		if(strcmp(command,"history")!=0)
 		{
 			printf("%s",command);
-			add_to_buffer(&command[0],&argument[0]);
+			add_to_buffer(&command[0],&argument1[0],&argument2[0]);
 		}
 	}
 }
