@@ -72,15 +72,39 @@ void rm(char arg[])
 	if (remove(arg) == 0) 
 	    printf("Deleted successfully"); 
 	else
-	    printf("Unable to delete the file"); 
-	  
+	    printf("Unable to delete the file"); 	  
 }
 
 void history()
 {
-	
-	printf("%s",buff[0].command);
-	
+    int fd[2];
+    pipe(fd);
+    pid_t f=fork();
+
+    if(f==0)
+    {
+        int select;
+        close(fd[0]);
+        int i;
+        for(i=0;i<buff_size;i++)
+        {
+            printf("\n#%d : %s %s",i+1,buff[i].command,buff[i].arg);
+        }
+         printf("\nSelect any one process to run else press 0\n");
+         scanf("%d",&select);
+         write(fd[1],&select,sizeof(select));
+         close(fd[1]);
+        exit(0);
+    }
+    else if(f>0)
+    {
+       int selected;
+        close(fd[1]);
+        wait(NULL);
+        read(fd[0],&selected,sizeof(selected));
+        close(fd[0]);
+        check(buff[selected-1].command,buff[selected-1].arg);
+    }
 }
 
 void echo(char arg[])
