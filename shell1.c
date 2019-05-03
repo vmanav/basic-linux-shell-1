@@ -37,6 +37,15 @@ void add_to_buffer(char *comm,char *argu)
 	}
 }
 
+void rm(char arg[])
+{
+	if (remove(arg) == 0) 
+	    printf("Deleted successfully"); 
+	else
+	    printf("Unable to delete the file"); 
+	  
+}
+
 void history()
 {
 	
@@ -154,6 +163,10 @@ void check(char command[10],char arg[100])
 	{
 	    //printf("%s",buff[0].command);
 		history();
+	}
+	if(strcmp(command,"rm")==0 && arg!="")
+	{
+		rm(arg);
 	}
 }
 
