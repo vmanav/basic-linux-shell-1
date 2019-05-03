@@ -23,18 +23,17 @@ void add_to_buffer(char *comm,char *argu)
 {
 	if(strcmp(comm,"history")!=0)
 	{
-
-    buff[buffer_temp].command=comm;
-    if(strlen(argu)>0)
-    buff[buffer_temp].arg=argu;
-    else
-    	buff[buffer_temp].arg=NULL;
-    buffer_temp=(buffer_temp+1)%5;
-   // printf("%s",buff[buffer_temp-1].command);
-    if(buff_size<=5)
-    buff_size++;
-    //printf("%s %s %d",buff[buffer_temp-1].command,buff[buffer_temp-1].arg,buffer_temp-1);
-}
+		buff[buffer_temp].command=comm;
+    		if(strlen(argu)>0)
+    			buff[buffer_temp].arg=argu;
+    		else
+    			buff[buffer_temp].arg=NULL;
+   		 buffer_temp=(buffer_temp+1)%5;
+   		// printf("%s",buff[buffer_temp-1].command);
+   		 if(buff_size<=5)
+    			buff_size++;
+    		//printf("%s %s %d",buff[buffer_temp-1].command,buff[buffer_temp-1].arg,buffer_temp-1);
+	}
 }
 
 void history()
