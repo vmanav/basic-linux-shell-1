@@ -3,6 +3,7 @@
 #include<stdio.h>  
 #include<unistd.h>  
 #include<string.h>
+#include<time.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h> 
@@ -35,6 +36,12 @@ void add_to_buffer(char *comm,char *argu)
     			buff_size++;
     		//printf("%s %s %d",buff[buffer_temp-1].command,buff[buffer_temp-1].arg,buffer_temp-1);
 	}
+}
+
+void curtime()
+{
+	time_t t;
+	printf("%s",ctime(&t));
 }
 
 void rm(char arg[])
@@ -167,6 +174,10 @@ void check(char command[10],char arg[100])
 	if(strcmp(command,"rm")==0 && arg!="")
 	{
 		rm(arg);
+	}
+	if(strcmp(command,"time")==0 && strlen(arg)==0)
+	{
+		curtime();
 	}
 }
 
