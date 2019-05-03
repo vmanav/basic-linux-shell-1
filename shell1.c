@@ -113,6 +113,34 @@ void makedir(char *arg)
     }
 }
 
+
+void touchIt(char* arg1)
+{	
+	pid_t f=fork();
+	if(f==0)
+	{
+        FILE *fptr1; 
+		fptr1 = fopen(arg1, "w"); 
+		if (fptr1 == NULL) 
+    	{	printf("Cannot touch %s",arg1); 
+        	exit(0); 
+    	} 
+  
+		// if(mkdir(arg, 0777) == -1)
+		// {
+		// 	perror("sorry");	
+		// }
+		fclose(fptr1);
+		exit(1);
+	}
+	else
+	{
+		wait(NULL);
+	}
+
+}
+
+
 void cd(char arg[100])
 {
     if(chdir(arg)!=0)
@@ -185,6 +213,10 @@ void check(char command[10],char arg[100])
     if(strcmp(command,"cal")==0 && strlen(arg)==0)
 	{
 		calander();
+	}
+    if(strcmp(command,"touch")==0 && strlen(arg)!=0 && arg!="")
+	{
+		touchIt(arg);
 	}
 }
 
