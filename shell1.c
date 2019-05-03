@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<string.h>
+#include<time.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -31,6 +32,27 @@ void add_to_buffer(char comm[10],char argu[100])
     if(buff_size<5)
     buff_size++;
 }
+
+void open(char arg1[],char arg2[])
+{
+	if(!fork())
+    		execlp(arg1,arg1,arg2, NULL);
+}
+
+void curtime()
+{
+	time_t t;
+	printf("%s",ctime(&t));
+}
+
+void rm(char arg[])
+{
+	if (remove(arg) == 0)
+	    printf("Deleted successfully");
+	else
+	    printf("Unable to delete the file");
+}
+
 
 void calander()
 {
@@ -219,6 +241,26 @@ void check(char command[10],char arg[100])
 	else if(strcmp(command,"who")==0 &&strlen(arg)==0)
     {
         who(getenv("USER"));
+    }
+    else if((strcmp(command,"firefox")==0||strcmp(command,"chrome")==0) && strlen(arg)==0)
+    {
+    	open(command,NULL);
+    }
+    else if((strcmp(command,"firefox")==0||strcmp(command,"chrome")==0) && arg!=0)
+    {
+    	open(command,arg);
+    }
+    else if((strcmp(command,"gedit")==0||strcmp(command,"vi")==0||strcmp(command,"nano")==0||strcmp(command,"subl")==0) && arg!="")
+    {
+    	open(command,arg);
+    }
+    else if(strcmp(command,"ctime")==0 && strlen(arg)==0)
+    {
+    	curtime(command,NULL);
+    }
+    else if(strcmp(command,"rm")==0 && arg!="")
+    {
+    	rm(arg);
     }
 
     else
