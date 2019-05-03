@@ -27,15 +27,18 @@ void add_to_buffer(char comm[10],char argu[100])
     strcpy(buff[buffer_temp].arg,argu);
         else
             strcpy(buff[buffer_temp].arg,"");
-        buffer_temp=(buffer_temp+1)%5;
-   // printf("%s",buff[buffer_temp-1].command);
+    buffer_temp=(buffer_temp+1)%5;
     if(buff_size<5)
     buff_size++;
 }
 
+void calander()
+{
+	system("cal");
+}
+
 void history()
 {
-
     int fd[2];
     pipe(fd);
     pid_t f=fork();
@@ -69,9 +72,9 @@ void history()
     }
 }
 
+
 void echo(char arg[])
 {
-
     char out[100];
     int len=strlen(arg);
     if(strlen(arg)>100)printf("OUT OF BUFFER RANGE \n");
@@ -97,7 +100,7 @@ void makedir(char *arg)
     {
         if(mkdir(arg, 0777) == -1)
         {
-           perror("soor");
+           perror("sorry");
         }
         exit(1);
     }
@@ -106,6 +109,34 @@ void makedir(char *arg)
         wait(NULL);
     }
 }
+
+
+void touchIt(char* arg1)
+{
+	pid_t f=fork();
+	if(f==0)
+	{
+        FILE *fptr1;
+		fptr1 = fopen(arg1, "w");
+		if (fptr1 == NULL)
+    	{	printf("Cannot touch %s",arg1);
+        	exit(0);
+    	}
+		fclose(fptr1);
+		exit(1);
+	}
+	else
+	{
+		wait(NULL);
+	}
+
+}
+
+void who(char *arg )
+{
+    printf("\n%s",arg);
+}
+
 
 void cd(char arg[100])
 {
@@ -132,7 +163,7 @@ void ls()
         {
             if(strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
                 continue;
-            printf("%s ",d->d_name);
+            printf("%s\n ",d->d_name);
         }
         exit(1);
     }
@@ -154,27 +185,45 @@ void check(char command[10],char arg[100])
     {
         ls();
     }
-    /*else if(strcmp(command,"ls")==0 && strlen(arg)!=0)
-        printf("error using ls command , please check the syntax \n");
-*/
-    if(strcmp(command,"cd")==0 && strlen(arg)!=0 && arg!="")
+
+    else if(strcmp(command,"cd")==0 && strlen(arg)!=0 && arg!="")
     {
         cd(arg);
     }
 
-    if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
+    else if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
     {
         makedir(arg);
     }
 
-    if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
+    else if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
     {
         echo(arg);
     }
 
-    if(strcmp(command,"history")==0 && strlen(arg)==0)
+    else if(strcmp(command,"history")==0 && strlen(arg)==0)
     {
         history();
+    }
+
+    else if(strcmp(command,"cal")==0 && strlen(arg)==0)
+	{
+		calander();
+	}
+
+    else if(strcmp(command,"touch")==0 && strlen(arg)!=0 && arg!="")
+	{
+		touchIt(arg);
+	}
+
+	else if(strcmp(command,"who")==0 &&strlen(arg)==0)
+    {
+        who(getenv("USER"));
+    }
+
+    else
+    {
+        printf("\nThe command does not exist\n");
     }
 }
 
@@ -200,7 +249,8 @@ void loop(void)
             }
             command[i++]=ch;
         }
-        if(strcmp(command,"exit")==0)break;
+        if(strcmp(command,"exit")==0)
+            break;
         if(sp)
         {
             while((ch=getchar())!='\n')
@@ -214,11 +264,9 @@ void loop(void)
     }
 }
 
-
 int main()
 {
-
+    printf("\n\t\t\t WELCOME TO OUR SHELL !!!\n");
     loop();
     return 0;
 }
-
