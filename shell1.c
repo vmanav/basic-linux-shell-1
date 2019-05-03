@@ -48,20 +48,21 @@ void echo(char arg[])
 	
 	char out[100];
 	int len=strlen(arg);
-	if(strlen(arg)>100)printf("OUT OF BUFFER RANGE \n");
-    else if(arg[0]=='\"' && arg[len-1]=='\"')
-    {
-    	int i;
-    	for(i=1;i<len-1;i++)
+	if(strlen(arg)>100)
+		printf("OUT OF BUFFER RANGE \n");
+    	else if(arg[0]=='\"' && arg[len-1]=='\"')
     	{
-    		printf("%c",arg[i]);
+    		int i;
+    		for(i=1;i<len-1;i++)
+    		{
+    			printf("%c",arg[i]);
+    		}
+    		//printf("\n");
     	}
-    	//printf("\n");
-    }
-    else
-    {
-    	perror("ERROR : Use \" \" To print");
-    }
+        else
+    	{
+    		perror("ERROR : Use \" \" To print");
+    	}
 }
 
 
@@ -70,11 +71,11 @@ void makedir(char *arg)
 	pid_t f=fork();
 	if(f==0)
 	{
-        if(mkdir(arg, 0777) == -1)
-        {
-           perror("soor");	
-        }
-        exit(1);
+        	if(mkdir(arg, 0777) == -1)
+        	{
+           		perror("sorry");	
+        	}
+        	exit(1);
 	}
 	else
 	{
@@ -85,10 +86,8 @@ void makedir(char *arg)
 void cd(char arg[100])
 {
 	//getcwd()
-	
 	if(chdir(arg)!=0)
 		perror("Cannot change the directory");
-	
 }
 
 void ls()
@@ -146,13 +145,10 @@ void check(char command[10],char arg[100])
 	{
 		makedir(arg);
 	}
-
-
 	if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
 	{
 		echo(arg);
 	}
-
 	if(strcmp(command,"history")==0 && strlen(arg)==0)
 	{
 	    //printf("%s",buff[0].command);
