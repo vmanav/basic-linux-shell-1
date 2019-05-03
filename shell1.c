@@ -33,6 +33,11 @@ void add_to_buffer(char comm[10],char argu[100])
     buff_size++;
 }
 
+void calander()
+{	// prints calender
+	system("cal");
+}
+
 void history()
 {
 
@@ -68,6 +73,7 @@ void history()
         check(buff[selected-1].command,buff[selected-1].arg);
     }
 }
+
 
 void echo(char arg[])
 {
@@ -106,6 +112,34 @@ void makedir(char *arg)
         wait(NULL);
     }
 }
+
+
+void touchIt(char* arg1)
+{	
+	pid_t f=fork();
+	if(f==0)
+	{
+        FILE *fptr1; 
+		fptr1 = fopen(arg1, "w"); 
+		if (fptr1 == NULL) 
+    	{	printf("Cannot touch %s",arg1); 
+        	exit(0); 
+    	} 
+  
+		// if(mkdir(arg, 0777) == -1)
+		// {
+		// 	perror("sorry");	
+		// }
+		fclose(fptr1);
+		exit(1);
+	}
+	else
+	{
+		wait(NULL);
+	}
+
+}
+
 
 void cd(char arg[100])
 {
@@ -176,6 +210,14 @@ void check(char command[10],char arg[100])
     {
         history();
     }
+    if(strcmp(command,"cal")==0 && strlen(arg)==0)
+	{
+		calander();
+	}
+    if(strcmp(command,"touch")==0 && strlen(arg)!=0 && arg!="")
+	{
+		touchIt(arg);
+	}
 }
 
 
