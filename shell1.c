@@ -333,7 +333,7 @@ void loop(void)
 
 int main()
 {
-    printf("\n\t\t\t WELCOME TO OUR SHELL !!!\n");
+    system("figlet welcome");
     loop();
     return 0;
 }
