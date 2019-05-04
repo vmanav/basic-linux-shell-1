@@ -3,44 +3,63 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<string.h>
+#include<time.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #define path_max 1000
-#define p_s(a) printf("%s",a)
-#define scs(a) scanf("%s",a)
 
 void check(char command[10],char arg[100]);
 int buffer_temp=0;
 int buff_size=0;
 
 
-struct buffer{
+struct buffer
+{
     char command[10];
-    char arg[100]    ;
+    char arg[100];
 }buff[5];
 
 void add_to_buffer(char comm[10],char argu[100])
 {
-    strcpy(buff[buffer_temp].command,comm)    ;
+    strcpy(buff[buffer_temp].command,comm);
     if(strlen(argu)>0)
-    strcpy(buff[buffer_temp].arg,argu);
-        else
+    	strcpy(buff[buffer_temp].arg,argu);
+    else
             strcpy(buff[buffer_temp].arg,"");
-        buffer_temp=(buffer_temp+1)%5;
-   // printf("%s",buff[buffer_temp-1].command);
+    buffer_temp=(buffer_temp+1)%5;
     if(buff_size<5)
-    buff_size++;
+    	buff_size++;
 }
 
+void open(char arg1[],char arg2[])
+{
+	if(!fork())
+    		execlp(arg1,arg1,arg2, NULL);
+}
+
+void curtime()
+{
+	time_t t;
+	printf("%s",ctime(&t));
+}
+
+void rm(char arg[])
+{
+	if (remove(arg) == 0)
+	    printf("Deleted successfully");
+	else
+	    printf("Unable to delete the file");
+}
+
+
 void calander()
-{	// prints calender
+{
 	system("cal");
 }
 
 void history()
 {
-
     int fd[2];
     pipe(fd);
     pid_t f=fork();
@@ -77,7 +96,6 @@ void history()
 
 void echo(char arg[])
 {
-
     char out[100];
     int len=strlen(arg);
     if(strlen(arg)>100)printf("OUT OF BUFFER RANGE \n");
@@ -103,7 +121,7 @@ void makedir(char *arg)
     {
         if(mkdir(arg, 0777) == -1)
         {
-           perror("soor");
+           perror("sorry");
         }
         exit(1);
     }
@@ -115,21 +133,16 @@ void makedir(char *arg)
 
 
 void touchIt(char* arg1)
-{	
+{
 	pid_t f=fork();
 	if(f==0)
 	{
-        FILE *fptr1; 
-		fptr1 = fopen(arg1, "w"); 
-		if (fptr1 == NULL) 
-    	{	printf("Cannot touch %s",arg1); 
-        	exit(0); 
-    	} 
-  
-		// if(mkdir(arg, 0777) == -1)
-		// {
-		// 	perror("sorry");	
-		// }
+        FILE *fptr1;
+		fptr1 = fopen(arg1, "w");
+		if (fptr1 == NULL)
+    	{	printf("Cannot touch %s",arg1);
+        	exit(0);
+    	}
 		fclose(fptr1);
 		exit(1);
 	}
@@ -138,6 +151,11 @@ void touchIt(char* arg1)
 		wait(NULL);
 	}
 
+}
+
+void who(char *arg )
+{
+    printf("\n%s",arg);
 }
 
 
@@ -166,7 +184,7 @@ void ls()
         {
             if(strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
                 continue;
-            printf("%s ",d->d_name);
+            printf("%s\n ",d->d_name);
         }
         exit(1);
     }
@@ -181,6 +199,27 @@ void ls()
     }
 }
 
+void help()
+{
+    printf("\nls");
+    printf("\ncd");
+    printf("\nmkdir");
+    printf("\necho");
+    printf("\nhistory");
+    printf("\ncal");
+    printf("\ntouch");
+    printf("\nwho");
+    printf("\nctime");
+    printf("\nfirefox");
+    printf("\nchrome");
+    printf("\nvi");
+    printf("\nsubl");
+    printf("\ngedit");
+    printf("\nnano");
+    printf("\nctime");
+    printf("\nrm");
+}
+
 
 void check(char command[10],char arg[100])
 {
@@ -188,36 +227,71 @@ void check(char command[10],char arg[100])
     {
         ls();
     }
-    /*else if(strcmp(command,"ls")==0 && strlen(arg)!=0)
-        printf("error using ls command , please check the syntax \n");
-*/
-    if(strcmp(command,"cd")==0 && strlen(arg)!=0 && arg!="")
+
+    else if(strcmp(command,"cd")==0 && strlen(arg)!=0 && arg!="")
     {
         cd(arg);
     }
 
-    if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
+    else if(strcmp(command,"mkdir")==0 && strlen(arg)!=0 && arg!="")
     {
         makedir(arg);
     }
 
-    if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
+    else if(strcmp(command,"echo")==0 && strlen(arg)!=0 && arg!="")
     {
         echo(arg);
     }
 
-    if(strcmp(command,"history")==0 && strlen(arg)==0)
+    else if(strcmp(command,"history")==0 && strlen(arg)==0)
     {
         history();
     }
-    if(strcmp(command,"cal")==0 && strlen(arg)==0)
+
+    else if(strcmp(command,"cal")==0 && strlen(arg)==0)
 	{
 		calander();
 	}
-    if(strcmp(command,"touch")==0 && strlen(arg)!=0 && arg!="")
+
+    else if(strcmp(command,"touch")==0 && strlen(arg)!=0 && arg!="")
 	{
 		touchIt(arg);
 	}
+
+	else if(strcmp(command,"who")==0 &&strlen(arg)==0)
+    {
+        who(getenv("USER"));
+    }
+    else if((strcmp(command,"firefox")==0||strcmp(command,"chrome")==0) && strlen(arg)==0)
+    {
+    	open(command,NULL);
+    }
+    else if((strcmp(command,"firefox")==0||strcmp(command,"chrome")==0) && arg!=0)
+    {
+    	open(command,arg);
+    }
+    else if((strcmp(command,"gedit")==0||strcmp(command,"vi")==0||strcmp(command,"nano")==0||strcmp(command,"subl")==0) && arg!="")
+    {
+    	open(command,arg);
+    }
+    else if(strcmp(command,"ctime")==0 && strlen(arg)==0)
+    {
+    	curtime();
+    }
+    else if(strcmp(command,"rm")==0 && arg!="")
+    {
+    	rm(arg);
+    }
+
+    else if(strcmp(command,"help")==0 && strlen(arg)==0)
+    {
+    	help();
+    }
+
+    else
+    {
+        printf("\nThe command does not exist\n");
+    }
 }
 
 
@@ -242,7 +316,8 @@ void loop(void)
             }
             command[i++]=ch;
         }
-        if(strcmp(command,"exit")==0)break;
+        if(strcmp(command,"exit")==0)
+            break;
         if(sp)
         {
             while((ch=getchar())!='\n')
@@ -256,11 +331,9 @@ void loop(void)
     }
 }
 
-
 int main()
 {
-
+    system("figlet welcome");
     loop();
     return 0;
 }
-
